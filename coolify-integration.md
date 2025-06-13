@@ -1,97 +1,78 @@
-# Integrating NodeBB Theme with Coolify for Continuous Development
+# Integrating NodeBB Theme with Coolify using Git Repository
 
-## Overview of Coolify
+## Overview
 
-Coolify is an open-source, self-hostable platform that simplifies the deployment and management of applications. It provides a user-friendly interface for setting up continuous integration and continuous deployment (CI/CD) pipelines, managing environment variables, and configuring automatic deployments. By using Coolify, you can streamline the development process for your NodeBB theme, ensuring that changes are automatically deployed whenever you push updates to your Git repository.
+This guide outlines how to integrate your NodeBB theme with Coolify by directly referencing the theme's Git repository in your NodeBB application's `docker-compose.yml` file. This approach ensures that the latest version of your theme from the `main` branch is always used during the build/deploy process.
 
 ## Prerequisites
 
-*   A working NodeBB installation.
-*   A Coolify account and a project set up.
+*   A working NodeBB installation managed by Docker and Docker Compose.
+*   A Coolify account and project set up, connected to your NodeBB application.
 *   A Git repository for the NodeBB theme.
 
 ## Configuration Steps
 
-1.  **Add a New Service in Coolify:**
+1.  **Modify the NodeBB `docker-compose.yml` file:**
 
-    *   Log in to your Coolify account and navigate to your project.
-    *   Click on the "Add Service" button.
-    *   Select "Git Repository" as the source type.
+    *   Edit your NodeBB application's `docker-compose.yml` file to include the theme repository as a volume. This allows the theme files to be directly accessible within the NodeBB container.
 
-2.  **Configure the Source:**
+    ```yaml
+    version: "3.7"
+    services:
+      nodebb:
+        image: nodebb/nodebb
+        # ... other configurations ...
+        volumes:
+          - ./data:/data
+          - ./themes/nodebb-theme-rose_darkly:/app/node_modules/nodebb-theme-rose_darkly # Mount the theme
+    ```
 
-    *   Enter the Git repository URL for your NodeBB theme.
-    *   Specify the branch you want to deploy (e.g., `main` or `master`).
-    *   Enable automatic deployments by checking the "Automatic Deployments" option.
+    *   In this example:
+        *   `./themes/nodebb-theme-rose_darkly` is a local directory (relative to the `docker-compose.yml` file) where you will clone the theme repository.
+        *   `/app/node_modules/nodebb-theme-rose_darkly` is the directory inside the NodeBB container where NodeBB expects to find the theme.
+    *   Before running `docker-compose up`, you need to clone the theme repository into the specified local directory:
 
-3.  **Set Environment Variables:**
+    ```bash
+    mkdir -p themes
+    cd themes
+    git clone <theme-git-repository-url> nodebb-theme-rose_darkly
+    ```
 
-    *   Add any necessary environment variables for your NodeBB theme. For example, you might need to specify the theme's name using the `NODEBB_THEME_NAME` variable with the value `nodebb-theme-rose_darkly`.
-    *   In Coolify, navigate to the service settings and click on "Environment Variables".
-    *   Add the required variables and their values.
+2.  **Configure Coolify to use the modified `docker-compose.yml` file:**
 
-4.  **Configure the Deploy Script:**
+    *   In Coolify, navigate to your NodeBB application's service settings.
+    *   Specify that Coolify should use your existing `docker-compose.yml` file instead of generating a new one.  This is typically done in the "Source" or "Deployment Settings" section of the service configuration.
+    *   Ensure that Coolify has access to the `docker-compose.yml` file in your repository.
 
-    *   Create a deploy script that copies the theme files to the NodeBB installation directory and restarts NodeBB.
-    *   In Coolify, navigate to the service settings and click on "Deploy Script".
-    *   Enter the following script (adjust the paths as needed):
+3.  **Set Environment Variables (if necessary):**
 
-        ```bash
-        #!/bin/bash
-        # Stop NodeBB
-        ./nodebb stop
+    *   If your theme requires specific environment variables, define them in Coolify's service settings.  For example, you might need to specify the theme's name:
 
-        # Copy theme files
-        cp -r /app/* /path/to/nodebb/themes/rose_darkly/
+    ```
+    NODEBB_THEME=nodebb-theme-rose_darkly
+    ```
 
-        # Start NodeBB
-        ./nodebb start
-        ```
+4.  **Configure the Build/Deploy Process:**
 
-    *   Make sure to replace `/path/to/nodebb` with the actual path to your NodeBB installation.
-    *   Ensure that the deploy script has execute permissions.
-
-5.  **Set the Buildpack:**
-
-    *   If your theme requires specific build steps (e.g., compiling SCSS), you might need to specify a buildpack.
-    *   In Coolify, navigate to the service settings and click on "Buildpack".
-    *   Select the appropriate buildpack (e.g., "Node.js") or leave it as "None" if no build steps are required.
-
-## Setting Up Automatic Deployments
-
-1.  **Configure Webhooks:**
-
-    *   In your Git repository (e.g., GitHub, GitLab), set up a webhook that triggers a deployment in Coolify whenever changes are pushed to the specified branch.
-    *   In Coolify, navigate to the service settings and copy the "Webhook URL".
-    *   In your Git repository, add a new webhook and paste the Coolify webhook URL.
-    *   Configure the webhook to trigger on "push" events.
-
-2.  **Test the Deployment:**
-
-    *   Make a small change to your theme's code (e.g., update a CSS file) and push it to your Git repository.
-    *   Verify that Coolify automatically deploys the changes and that the changes are reflected in your NodeBB installation.
+    *   Coolify will use the `docker-compose.yml` file to build and deploy your NodeBB application.  Since the theme is included as a volume, any changes to the theme in the Git repository will be reflected in the deployed application after a rebuild.
+    *   You may need to configure a build script in Coolify to run `docker-compose up -d --build` to ensure that the changes are applied.
 
 ## Relevant Configuration Details
 
-*   **NodeBB Theme Directory:** `/path/to/nodebb/themes/theme-name/`
-*   **Example `plugin.json` Configuration:**
+*   **NodeBB Theme Directory (inside container):** `/app/node_modules/`
+*   **Example `docker-compose.yml` Snippet:**
 
-    ```json
-    {
-      "id": "nodebb-theme-rose_darkly",
-      "name": "Rose Darkly",
-      "description": "A dark theme for NodeBB.",
-      "version": "1.0.0",
-      "less": [
-        "theme.less"
-      ],
-      "templates": [
-        "templates/header.tpl",
-        "templates/footer.tpl"
-      ]
-    }
+    ```yaml
+    version: "3.7"
+    services:
+      nodebb:
+        image: nodebb/nodebb
+        # ... other configurations ...
+        volumes:
+          - ./data:/data
+          - ./themes/nodebb-theme-rose_darkly:/app/node_modules/nodebb-theme-rose_darkly
     ```
 
 ## Conclusion
 
-By integrating your NodeBB theme with Coolify, you can automate the deployment process and ensure that changes are quickly and easily deployed to your NodeBB installation. This streamlines the development workflow and allows you to focus on creating a great theme without worrying about manual deployment steps.
+By integrating your NodeBB theme with Coolify using this method, you ensure that your NodeBB application always uses the latest version of the theme directly from your Git repository. This simplifies the deployment process and makes it easier to manage theme updates.
