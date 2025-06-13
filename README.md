@@ -1,3 +1,8 @@
+&lt;!--
+theapk llc
+https://theapk.com
+ian@theapk.com
+--&gt;
 Harmony theme for NodeBB
 ====================
 
