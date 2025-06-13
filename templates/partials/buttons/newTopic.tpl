@@ -1,7 +1,5 @@
 <noscript><div class="dropdown" component="category-selector"></noscript>
-<button component="category/post" for="category-dropdown-check" class="btn btn-primary btn-sm text-nowrap" id="new_topic" role="button">
-	[[category:new-topic-button]]
-</button>
+<button class="button">[[category:new-topic-button]]</button>
 <noscript>
 	<input type="checkbox" class="hidden" id="category-dropdown-check" aria-hidden="true">
 	<ul component="category/list" class="dropdown-menu p-1 text-sm category-dropdown-menu ghost-scrollbar" role="menu">

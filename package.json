@@ -11,7 +11,9 @@
     "url": "https://github.com/NodeBB/nodebb-theme-harmony"
   },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+      "build:css": "tailwindcss -i ./theme.scss -o ./public/style.css --minify",
+      "dev:css": "tailwindcss -i ./theme.scss -o ./public/style.css --watch"
   },
   "keywords": [
     "nodebb",
@@ -41,7 +43,15 @@
     "@fontsource/poppins": "5.0.8"
   },
   "devDependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
+    "autoprefixer": "^10.4.21",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "eslint": "9.28.0",
-    "eslint-config-nodebb": "^1.1.4"
+    "eslint-config-nodebb": "^1.1.4",
+    "lucide-react": "^0.515.0",
+    "postcss": "^8.5.5",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.10"
   }
 }

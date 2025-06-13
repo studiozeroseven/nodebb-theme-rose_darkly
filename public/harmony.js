@@ -1,6 +1,7 @@
 'use strict';
 
 $(document).ready(function () {
+
 	setupSkinSwitcher();
 	setupNProgress();
 	setupMobileMenu();
@@ -12,6 +13,7 @@ $(document).ready(function () {
 	fixSidebarOverflow();
 
 	function setupSkinSwitcher() {
+		console.log('Skin switcher clicked');
 		$('[component="skinSwitcher"]').on('click', '.dropdown-item', function () {
 			const skin = $(this).attr('data-value');
 			$('[component="skinSwitcher"] .dropdown-item .fa-check').addClass('invisible');
@@ -45,6 +47,7 @@ $(document).ready(function () {
 	});
 
 	function setupMobileMenu() {
+		console.log('Mobile menu toggle clicked');
 		require(['hooks', 'api', 'navigator'], function (hooks, api, navigator) {
 			$('[component="sidebar/toggle"]').on('click', async function () {
 				const sidebarEl = $('.sidebar');
@@ -135,12 +138,14 @@ $(document).ready(function () {
 	}
 
 	function setupSearch() {
+		console.log('Search dropdown shown');
 		$('[component="sidebar/search"]').on('shown.bs.dropdown', function () {
 			$(this).find('[component="search/fields"] input[name="query"]').trigger('focus');
 		});
 	}
 
 	function setupDrafts() {
+		console.log('Drafts dropdown shown');
 		require(['composer/drafts', 'bootbox'], function (drafts, bootbox) {
 			const draftsEl = $('[component="sidebar/drafts"]');
 
@@ -159,7 +164,6 @@ $(document).ready(function () {
 					draftListEl.find('.no-drafts').removeClass('hidden');
 					draftListEl.find('.placeholder-wave').addClass('hidden');
 					draftListEl.find('.draft-item-container').html('');
-					return;
 				}
 				draftItems.reverse().forEach((draft) => {
 					if (draft) {
@@ -203,8 +207,10 @@ $(document).ready(function () {
 	}
 
 	function setupNProgress() {
+		console.log('NProgress started');
 		require(['nprogress'], function (NProgress) {
 			window.nprogress = NProgress;
+			console.log('NProgress ended');
 			if (NProgress) {
 				$(window).on('action:ajaxify.start', function () {
 					NProgress.set(0.7);
@@ -218,6 +224,7 @@ $(document).ready(function () {
 	}
 
 	function handleMobileNavigator() {
+		console.log('Mobile navigator ajaxify end');
 		const paginationBlockEl = $('.pagination-block');
 		require(['hooks'], function (hooks) {
 			hooks.on('action:ajaxify.end', function () {
@@ -252,6 +259,7 @@ $(document).ready(function () {
 			const target = $(ev.target);
 			const isDropdown = target.hasClass('dropdown-menu') || !!target.parents('.dropdown-menu').length;
 			if (!$('.sidebar').hasClass('open') && !isDropdown) {
+				console.log('Nav tooltip mouseenter');
 				$(this).tooltip('show');
 			}
 		});
@@ -296,3 +304,5 @@ $(document).ready(function () {
 			.on('hidden.bs.dropdown', toggleOverflow);
 	}
 });
+
+// Add Shadcn UI JavaScript interactions here
