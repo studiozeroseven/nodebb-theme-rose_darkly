@@ -26,7 +26,7 @@ Coolify is an open-source, self-hostable platform that simplifies the deployment
 
 3.  **Set Environment Variables:**
 
-    *   Add any necessary environment variables for your NodeBB theme. For example, you might need to specify the theme's name using the `NODEBB_THEME_NAME` variable.
+    *   Add any necessary environment variables for your NodeBB theme. For example, you might need to specify the theme's name using the `NODEBB_THEME_NAME` variable with the value `nodebb-theme-rose_darkly`.
     *   In Coolify, navigate to the service settings and click on "Environment Variables".
     *   Add the required variables and their values.
 
